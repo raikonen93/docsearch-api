@@ -17,13 +17,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '9.0.102'
 
     - name: Restore dependencies
-      run: dotnet restore ./DocSearch/DocSearch.sln
+      run: dotnet restore ./DocSearch.sln
 
     - name: Build
-      run: dotnet build ./DocSearch/DocSearch.sln --no-restore -c Release
+      run: dotnet build ./DocSearch.sln --no-restore -c Release
 
     - name: Test
-      run: dotnet test ./DocSearch/DocSearch.sln --no-build -c Release
+      run: dotnet test ./DocSearch.sln --no-build -c Release
