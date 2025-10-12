@@ -4,10 +4,16 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//SeriLog Settings
+//SeriLog Settings+Coreletion Id
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHeaderPropagation(options => options.Headers.Add("X-Correlation-ID"));
+
 builder.Host.UseSerilog((context, config) => config
-    .WriteTo.Console()
-    .ReadFrom.Configuration(context.Configuration));
+    .WriteTo.Console(outputTemplate:
+            "[{Timestamp:HH:mm:ss} {Level:u3}] [CorrId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithCorrelationIdHeader("X-Correlation-ID"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -17,6 +23,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+app.UseHeaderPropagation();
 
 app.UseSerilogRequestLogging();
 
